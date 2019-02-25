@@ -14,12 +14,10 @@ app.use('/', (req, res) => {
 })
 
 let messages = []
-let usersOn = 0
+
 
 io.on('connection', socket => {
     console.log(`User Conectado ${socket.id}`)
-    usersOn++
-    /* socket.broadcast.emit('userJoined', { usersOn: usersOn }) */
 
     socket.emit('previousMessage', messages)
 
@@ -28,12 +26,6 @@ io.on('connection', socket => {
         socket.broadcast.emit('messageReceived', data)
     })
 
-   /*  socket.on('disconnect', () => {
-        usersOn--
-        socket.broadcast.emit('userLeft', { usersOn: usersOn })
-
-    }) */
-    console.log(usersOn)
   
 })
 

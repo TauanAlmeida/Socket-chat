@@ -39,7 +39,7 @@
     $('#exampleModal').modal('show');
     })
         //lembrar de por o ip local para que funcione em outros dispositivos.
-        var socket = io('http://10.103.33.90:3000')
+        var socket = io('colocar ip local')
         var users = 0
         
 
@@ -47,15 +47,7 @@
             $('.messages').append('<div class="message"><strong>'+ message.author +'</strong>: ' + message.message + '</div>')
         }
 
-    /*     socket.on('userJoined', (usersOn) => {
-            users = usersOn.usersOn
-            $('#users').append(users)
-            socket.on('userLeft', (usersOn) => {
-                $('#users').append(users)
-            })
-        }) */
-
-
+    
         socket.on('previousMessage', (messages) => {
             messages.forEach(message => {
                 renderMessage(message)
