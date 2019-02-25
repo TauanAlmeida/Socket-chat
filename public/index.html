@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Socket Chat</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="styles.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+</head>
+<body>
+          <form id="name">
+              <div class="modal" id="exampleModal" tabindex="-1" role="dialog">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title">Socket Chat</h5>
+                      </div>
+                      <div class="modal-body">
+                        <input type="text" class="ml-3" name="username"  minlength="5" maxlength="10" id="input-text" placeholder="Digite seu nome">
+                      </div>
+                      <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary" id="botao" data-dismiss="test">Entrar</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+          </form>  
+    <form id="chat">
+        <div class="messages"></div>
+        <input type="text" name="message" placeholder="Digite sua mensagem" autocomplete="off">
+        <button type="submit">Enviar</button>
+    </form>
+   
+    <script type="text/javascript">
+    $(document).ready(function() {
+    $('#exampleModal').modal('show');
+    })
+        //lembrar de por o ip local para que funcione em outros dispositivos.
+        var socket = io('http://10.103.33.90:3000')
+        var users = 0
+        
+
+        function renderMessage(message){
+            $('.messages').append('<div class="message"><strong>'+ message.author +'</strong>: ' + message.message + '</div>')
+        }
+
+    /*     socket.on('userJoined', (usersOn) => {
+            users = usersOn.usersOn
+            $('#users').append(users)
+            socket.on('userLeft', (usersOn) => {
+                $('#users').append(users)
+            })
+        }) */
+
+
+        socket.on('previousMessage', (messages) => {
+            messages.forEach(message => {
+                renderMessage(message)
+            });
+        })
+        
+
+        socket.on('messageReceived', (message) => {
+            renderMessage(message)
+        })
+
+        $('#name').submit( function(e){
+            e.preventDefault()
+          var teste = ''
+            var author = $('input[name=username]').val()
+            if (author.length < 5){
+              alert('O nome deve ser maior que 5 caracteres.')
+               
+            }else if (author.length > 10){
+              alert('O nome deve ser menor que 10 caracteres.')
+            
+            }else{
+              $('#exampleModal').modal('toggle'); 
+
+            }
+        })
+
+        $('#chat').submit( function(e){
+            e.preventDefault()
+
+            var author = $('input[name=username]').val()
+            var message = $('input[name=message]').val()
+
+            if (author.length && message.length ){
+                var messageObject = {
+                    author: author,
+                    message: message,
+                }
+                renderMessage(messageObject)
+
+                socket.emit('sendMessage', messageObject)
+
+            }
+        })
+    </script>
+</body>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+</html>
